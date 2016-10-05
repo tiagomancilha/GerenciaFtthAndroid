@@ -1,0 +1,50 @@
+
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:map="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="br.com.ftth.gerenciaftth.MapasActivity" >
+
+        <include layout="@layout/toolbar" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/excluirElemento"
+            android:layout_gravity="bottom|left"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/ic_delete_black_24dp"
+
+             />
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="75dp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/editarElemento"
+            android:layout_gravity="bottom|left"
+
+            android:src="@drawable/ic_mode_edit_black_24dp"
+
+             />
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/btAdicionarElementoNoMapa"
+            android:layout_gravity="bottom|left"
+
+            android:src="@drawable/ic_add_circle_black_24dp"
+
+             />
+
+
+    </fragment>
+
+

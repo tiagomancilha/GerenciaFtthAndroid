@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_slideshow"
+            android:icon="@drawable/cast_ic_notification_0"
+            android:title="Áreas offline" />
+        <item
+            android:id="@+id/nav_manage"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Configurações" />
+    </group>
+
+    <item android:title="Tipos de Mapas">
+        <menu>
+            <item
+                android:id="@+id/mapa_normal"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Normal" />
+            <item
+                android:id="@+id/mapa_hibrido"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Híbrido" />
+            <item
+                android:id="@+id/mapa_terreno"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Terreno" />
+            <item
+                android:id="@+id/mapa_satelite"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Satélite" />
+        </menu>
+    </item>
+    <item android:title="">
+        <menu>
+            <item
+                android:id="@+id/encerrar_sessao"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Encerrar Sessão" />
+        </menu>
+    </item>
+
+</menu>
