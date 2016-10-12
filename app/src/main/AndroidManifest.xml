@@ -3,7 +3,6 @@
     package="br.com.ftth.gerenciaftth">
 
     <uses-sdk
-        android:maxSdkVersion="23"
         android:minSdkVersion="19"
         android:targetSdkVersion="23" />
     <!--
@@ -56,7 +55,6 @@
 
         </activity>
         <activity android:name=".AddElementoActivity" />
-        <activity android:name=".TelaPrincipal" />
         <activity android:name=".EditarElementoActivity" />
         <activity android:name=".VerificarCaixaNapActivity" />
         <!--

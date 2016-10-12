@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class CriaBanco extends SQLiteOpenHelper {
 
+    public static final int VERSAO_BD = 6;
     public static final String NOME_BANCO = "gerenciaftth";
     public static final String TABELA_MARCADORES = "marcadores";
     public static final String _ID = "id";
@@ -22,10 +23,8 @@ public class CriaBanco extends SQLiteOpenHelper {
     public static final String INFO = "info";
     public static final String ATUALIZADO = "atualizado";
 
-    public static final int VERSAO = 1;
-
     public CriaBanco(Context c){
-        super(c,NOME_BANCO,null,VERSAO);
+        super(c,NOME_BANCO,null,VERSAO_BD);
     }
     public CriaBanco(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
@@ -43,7 +42,7 @@ public class CriaBanco extends SQLiteOpenHelper {
                 + LATITUDE  + " text,"
                 + LONGITUDE + " text,"
                 + INFO      + " text,"
-                + ATUALIZADO+ " integer"
+                + ATUALIZADO+ " text"
                 +")";
         db.execSQL(sql);
     }
@@ -51,7 +50,7 @@ public class CriaBanco extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        db.execSQL("DROP TABLE IF EXISTS" + TABELA_MARCADORES);
+        db.execSQL("DROP TABLE " + TABELA_MARCADORES);
         onCreate(db);
     }
 }

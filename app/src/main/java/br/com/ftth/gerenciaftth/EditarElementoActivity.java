@@ -31,7 +31,7 @@ import java.util.List;
 public class EditarElementoActivity extends Activity {
 
      int id = 0;
-    String tipo, setor,alimentacao,grupo,caixa,info;
+    String tipo, setor,alimentacao,grupo,caixa,info,status;
     Spinner tipoElemento;
     TextView tvCaixaElemento;
     EditText setorElemento,alimentacaoElemento,grupoElemento,caixaelemento,infoElemento;
@@ -49,6 +49,7 @@ public class EditarElementoActivity extends Activity {
         grupo = getIntent().getExtras().getString("grupo");
         caixa = getIntent().getExtras().getString("caixa");
         info = getIntent().getExtras().getString("info");
+        status = getIntent().getExtras().getString("status");
         tipoElemento = (Spinner)findViewById(R.id.editar_tipo_elemento);
         setorElemento = (EditText)findViewById(R.id.editar_numero_setor);
         alimentacaoElemento = (EditText)findViewById(R.id.editar_alimentacao);
@@ -105,6 +106,19 @@ public class EditarElementoActivity extends Activity {
                 final String grupoElem =  grupoElemento.getText().toString();
                 final String caixaElem = caixaelemento.getText().toString();
                 final String informacoesElem = infoElemento.getText().toString();
+                if(status.equals("LOC")){
+                    Intent it = new Intent();
+                    it.putExtra("id",_id);
+                    it.putExtra("info",informacoesElem);
+                    it.putExtra("tipo",tipoElem);
+                    it.putExtra("setor",setorElem);
+                    it.putExtra("alimentacao",alimentacaoElem);
+                    it.putExtra("grupo",grupoElem);
+                    it.putExtra("caixa",caixaElem);
+                    it.putExtra("index",index);
+                    setResult(Constantes.RESULT_EDITAR_NO_BANCO,it);
+                    finish();
+                }
                 final Intent it = new Intent();
                 new Thread(new Runnable()
                 {

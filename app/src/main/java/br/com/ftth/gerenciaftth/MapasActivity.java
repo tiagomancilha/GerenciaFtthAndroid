@@ -157,7 +157,7 @@ public class MapasActivity extends FragmentActivity implements GoogleMap.OnMyLoc
                         }
                     }
                     BancoController bc = new BancoController(getBaseContext());
-                    bc.excluirMarcador(tabelaDeMarcadores.get(index));
+                    bc.excluirMarcadorPeloId(tabelaDeMarcadores.get(index).getId());
                     final int _id = id;
                     final int _index = index;
                     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {

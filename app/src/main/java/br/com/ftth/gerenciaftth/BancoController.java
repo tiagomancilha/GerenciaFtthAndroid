@@ -47,30 +47,25 @@ public class BancoController {
         valores.put(CriaBanco.LATITUDE,marc.getLatitude());
         valores.put(CriaBanco.LONGITUDE,marc.getLongitude());
         valores.put(CriaBanco.INFO,marc.getInfo());
-        valores.put(CriaBanco.ATUALIZADO,"0");
+        valores.put(CriaBanco.ATUALIZADO,"NAO");
         db.update(CriaBanco.TABELA_MARCADORES, valores,onde,null);
         db.close();
     }
     //////////////////////////////////////////////////////////////////////////////////////////////
-    public void excluirMarcador(Marcador marc){
+    public void excluirMarcadorPeloId(int id){
         ContentValues valores;
         db = banco.getReadableDatabase();
-        String onde = CriaBanco._ID +  "=" + marc.getId();
-
+        String onde = CriaBanco._ID +  "=" + id;
         db.delete(CriaBanco.TABELA_MARCADORES,onde,null);
         db.close();
     }
     //////////////////////////////////////////////////////////////////////////////////////////////
     public Cursor carregarMarcadores(){
         Cursor cursor;
-      //  String[] campos =  {banco.ID,banco.TITULO};
         db = banco.getReadableDatabase();
         cursor = db.query(banco.TABELA_MARCADORES, null, null, null, null, null, null, null);
-        if(cursor!=null){
-            cursor.moveToFirst();
-        }
+        cursor.moveToFirst();
         db.close();
-        quantidadeDeMarcadores = cursor.getCount();
         return cursor;
     }
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -81,5 +76,6 @@ public class BancoController {
     public void limparTabela(String nome){
         db = banco.getWritableDatabase();
         db.execSQL("delete * from " + nome);
+        db.close();
     }
 }

@@ -91,15 +91,30 @@ public class AddElementoActivity extends AppCompatActivity {
         gravar.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                    final String tipoElemento =  tipo.getSelectedItem().toString();
-                    final String alimentacaoElemento =  alimentacao.getText().toString();
-                    final String setorElemento =  setor.getText().toString();
-                    final String grupoElemento =  grupo.getText().toString();
-                    final String caixaElemento = caixa.getText().toString();
+                    final String ONDE_GRAVAR = "" + extras.getString("ONDE_GRAVAR");
+                    final String tipoElemento = "" +  tipo.getSelectedItem().toString();
+                    final String alimentacaoElemento = "" +   alimentacao.getText().toString();
+                    final String setorElemento = "" +   setor.getText().toString();
+                    final String grupoElemento = "" +    grupo.getText().toString();
+                    final String caixaElemento = "" +  caixa.getText().toString();
                     final String latitude = "" + extras.getDouble("latitude");
                     final String longitude = "" + extras.getDouble("longitude");
-                    final String informacoesElemento = informacoes.getText().toString();
+                    final String informacoesElemento = "" +  informacoes.getText().toString();
                     Log.e("POST", tipoElemento + " " + setorElemento  + " " + grupoElemento   + " " + latitude);
+                    if(ONDE_GRAVAR.equals("LOC")){
+                        Intent it = new Intent();
+                        it.putExtra("info",informacoesElemento);
+                        it.putExtra("latitude",Double.parseDouble(latitude));
+                        it.putExtra("longitude",Double.parseDouble(longitude));
+                        it.putExtra("tipo",tipoElemento);
+                        it.putExtra("setor",setorElemento);
+                        it.putExtra("alimentacao",alimentacaoElemento);
+                        it.putExtra("grupo",grupoElemento);
+                        it.putExtra("caixa",caixaElemento);
+                        setResult(Constantes.RESULT_GRAVAR_NO_BANCO,it);
+                        finish();
+                    }
+
                     final Intent it = new Intent();
                     new Thread(new Runnable()
                     {
@@ -163,12 +178,20 @@ public class AddElementoActivity extends AppCompatActivity {
                             }
                             catch (IOException ioe){
                                 it.putExtra("EXCECAO",ioe.toString());
-                                setResult(Activity.RESULT_CANCELED, it);
+                                setResult(Constantes.RESULT_GRAVAR_NO_BANCO, it);
                             }
                             catch(Exception erro){
                                 it.putExtra("EXCECAO",erro.toString());
                                 setResult(Activity.RESULT_CANCELED, it);
                             }
+                            it.putExtra("info",informacoesElemento);
+                            it.putExtra("latitude",Double.parseDouble(latitude));
+                            it.putExtra("longitude",Double.parseDouble(longitude));
+                            it.putExtra("tipo",tipoElemento);
+                            it.putExtra("setor",setorElemento);
+                            it.putExtra("alimentacao",alimentacaoElemento);
+                            it.putExtra("grupo",grupoElemento);
+                            it.putExtra("caixa",caixaElemento);
                             finish();
                         }
                     }).start();

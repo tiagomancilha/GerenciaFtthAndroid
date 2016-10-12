@@ -2,13 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/informacoes"
         android:orderInCategory="100"
-        android:title="Pesquisa"
+        android:title="Informações"
+        android:icon="@drawable/ic_info_black_24dp"
         app:showAsAction="never" />
     <item
-        android:id="@+id/atualizar"
+        android:id="@+id/downloads"
         android:orderInCategory="100"
-        android:title="Atualizar"
+        android:icon="@drawable/ic_file_download_black_24dp"
+        android:title="Downloads"
         app:showAsAction="never" />
 </menu>
