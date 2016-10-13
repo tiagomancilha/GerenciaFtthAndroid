@@ -811,13 +811,9 @@ public class StarwebFTTH extends AppCompatActivity implements
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.mapa_hibrido) {
-            mapa.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-        } else if (id == R.id.mapa_normal) {
+        if (id == R.id.mapa_normal) {
             mapa.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        } else if (id == R.id.mapa_terreno) {
-            mapa.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-        } else if (id == R.id.mapa_satelite) {
+        }  else if (id == R.id.mapa_satelite) {
             mapa.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
