@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -241,13 +243,11 @@ public class StarwebFTTH extends AppCompatActivity implements
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     public boolean onQueryTextSubmit(String query) {
-        toast(query,0);
         return false;
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     public boolean onQueryTextChange(String newText) {
-        toast(newText,0);
         return false;
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -285,6 +285,7 @@ public class StarwebFTTH extends AppCompatActivity implements
         setContentView(R.layout.activity_starweb_ftth);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setBackground(new ColorDrawable(Color.parseColor("#CC492B")));
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.mapa);
         mapFragment.getMapAsync(this);
