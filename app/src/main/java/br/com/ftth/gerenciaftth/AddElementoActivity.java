@@ -120,7 +120,7 @@ public class AddElementoActivity extends AppCompatActivity {
                     {
                         public void run() {
                             try{
-                                String address = "http://www.gerenciaftth.tk/php/setMarker.php";
+                                String address = CriaBanco.HTTP_SET_MARKER;
                                 HttpClient client = new DefaultHttpClient();
                                 HttpPost post = new HttpPost(address);
                                 List<BasicNameValuePair> pairs = new ArrayList<BasicNameValuePair>();
@@ -159,8 +159,6 @@ public class AddElementoActivity extends AppCompatActivity {
                                         it.putExtra("alimentacao",alimentacaoElemento);
                                         it.putExtra("grupo",grupoElemento);
                                         it.putExtra("caixa",caixaElemento);
-
-
                                         setResult(Activity.RESULT_OK, it);
                                     }
                                     else{

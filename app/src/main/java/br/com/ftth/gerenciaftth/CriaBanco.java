@@ -23,6 +23,12 @@ public class CriaBanco extends SQLiteOpenHelper {
     public static final String INFO = "info";
     public static final String ATUALIZADO = "atualizado";
 
+    public static final String HTTP_SET_MARKER = "http://www.gerenciaftth.tk/php/setMarker.php";
+    public static final String HTTP_DELETE_MARKER = "http://www.gerenciaftth.tk/php/deleteMarker.php";
+    public static final String HTTP_UPDATE_MARKER = "http://www.gerenciaftth.tk/php/updateMarker.php";
+    public static final String HTTP_UPDATE_COORDENADAS_MARKER = "http://www.gerenciaftth.tk/php/setCoordenadasMarker.php";
+    public static final String HTTP_GET_MARKERS = "http://www.gerenciaftth.tk/php/getMarkers.php";
+
     public CriaBanco(Context c){
         super(c,NOME_BANCO,null,VERSAO_BD);
     }

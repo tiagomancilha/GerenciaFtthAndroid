@@ -13,4 +13,10 @@
         android:icon="@drawable/ic_file_download_black_24dp"
         android:title="Downloads"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/atualizar"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_file_download_black_24dp"
+        android:title="Atualizar"
+        app:showAsAction="never" />
 </menu>

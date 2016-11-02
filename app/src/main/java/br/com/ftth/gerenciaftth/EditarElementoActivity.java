@@ -124,7 +124,7 @@ public class EditarElementoActivity extends Activity {
                 {
                     public void run() {
                         try{
-                            String address = "http://www.gerenciaftth.tk/php/updateMarker.php";
+                            String address = CriaBanco.HTTP_UPDATE_MARKER;
                             HttpClient client = new DefaultHttpClient();
                             HttpPost post = new HttpPost(address);
                             List<BasicNameValuePair> pairs = new ArrayList<BasicNameValuePair>();

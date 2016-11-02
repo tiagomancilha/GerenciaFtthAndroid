@@ -33,6 +33,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
@@ -40,6 +42,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -233,12 +236,48 @@ public class StarwebFTTH extends AppCompatActivity implements
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     public void onMarkerDrag(Marker marker) {
-
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
-    public void onMarkerDragEnd(Marker marker) {
+    public void onMarkerDragEnd(Marker marcador) {
+        marcadorSelecionado = marcador;
+        final Marker marker = marcador;
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    String address = CriaBanco.HTTP_UPDATE_COORDENADAS_MARKER;
+                    HttpClient client = new DefaultHttpClient();
+                    HttpPost post = new HttpPost(address);
+                    List<BasicNameValuePair> pairs = new ArrayList<BasicNameValuePair>();
+                    pairs.add(new BasicNameValuePair("id", "" + marker.getSnippet()));
+                    pairs.add(new BasicNameValuePair("latitude", "" + marker.getPosition().latitude));
+                    pairs.add(new BasicNameValuePair("longitude", "" + marker.getPosition().longitude));
+                    post.setEntity(new UrlEncodedFormEntity(pairs));
+                    HttpResponse response = client.execute(post);
+                    String responseText = "";
+                    responseText = EntityUtils.toString(response.getEntity());
+                    Log.e("UPDATE", responseText);
+                    final JSONObject json = new JSONObject(responseText);
+                    if (json.getBoolean("status") == true) {
+                       toast( "Marcador " + marker.getSnippet() + " alterado com sucesso",1);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
 
+                            }
+                        });
+                    }
+                } catch (ParseException e) {
+                    Log.i("Parse Exception", e + "");
+                } catch (ClientProtocolException cpe) {
+                    Log.e("ERRO_CPE", cpe.toString());
+                } catch (IOException ioe) {
+                    Log.e("ERRO_IO", ioe.toString());
+                } catch (Exception erro) {
+                    Log.e("ERRO_", erro.getMessage());
+                }
+            }
+        }).start();
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
@@ -279,6 +318,36 @@ public class StarwebFTTH extends AppCompatActivity implements
         }
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////
+    private ItensRetorno.IndexStatusId identificaMarcadorSelecionado(){
+        String status = "";
+        int index = 0;
+        long _id = 0;
+        if(tabelaDeMarcadores != null){
+            for (int f = 0; f < tabelaDeMarcadores.size(); f++) {
+                if (marcadores.get(f).equals(marcadorSelecionado)) {
+                    status = "WEB";
+                    index = f;
+                    _id = tabelaDeMarcadores.get(f).getId();
+                    break;
+                }
+            }
+        }
+        if(tabelaDeMarcadoresOffline != null && status.toString().equals("")){
+            for (int f = 0; f < tabelaDeMarcadoresOffline.size(); f++) {
+                if (marcadoresOffline.get(f).equals(marcadorSelecionado)) {
+                    status = "LOC";
+                    index = f;
+                    _id = tabelaDeMarcadoresOffline.get(f).getId();
+                    break;
+                }
+            }
+        }
+        if(status.toString().equals("")){
+            return new ItensRetorno.IndexStatusId(0,null,0);
+        }
+        return new ItensRetorno.IndexStatusId(index,status,_id);
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -286,6 +355,8 @@ public class StarwebFTTH extends AppCompatActivity implements
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setBackground(new ColorDrawable(Color.parseColor("#CC492B")));
+        GoogleMapOptions gmo = new GoogleMapOptions();
+        gmo.zOrderOnTop(true);
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.mapa);
         mapFragment.getMapAsync(this);
@@ -295,84 +366,34 @@ public class StarwebFTTH extends AppCompatActivity implements
         editarElemento.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(tabelaDeMarcadores != null){
-                    for (int f = 0; f < tabelaDeMarcadores.size(); f++) {
-                        if (marcadores.get(f).equals(marcadorSelecionado)) {
-                            Marcador m = tabelaDeMarcadores.get(f);
-                            Marker mark = marcadores.get(f);
-                            Intent it = new Intent(StarwebFTTH.this, EditarElementoActivity.class);
-                            it.putExtra("id", m.getId());
-                            it.putExtra("tipo", m.getTipo());
-                            it.putExtra("setor", m.getSetor());
-                            it.putExtra("alimentacao", m.getAlimentacao());
-                            it.putExtra("grupo", m.getGrupo());
-                            it.putExtra("caixa", m.getCaixa());
-                            it.putExtra("info", m.getInfo());
-                            it.putExtra("index", f);
-                            it.putExtra("status", "WEB");
-                            startActivityForResult(it, Constantes.EDITAR_ELEMENTO);
-                            return;
-                        }
-                    }
-                }
-                for (int f = 0; f < tabelaDeMarcadoresOffline.size(); f++) {
-                    if (marcadoresOffline.get(f).equals(marcadorSelecionado)) {
-                        Marcador m = tabelaDeMarcadoresOffline.get(f);
-                        Marker mark = marcadoresOffline.get(f);
-                        Intent it = new Intent(StarwebFTTH.this, EditarElementoActivity.class);
-                        it.putExtra("id", m.getId());
-                        it.putExtra("tipo", m.getTipo());
-                        it.putExtra("setor", m.getSetor());
-                        it.putExtra("alimentacao", m.getAlimentacao());
-                        it.putExtra("grupo", m.getGrupo());
-                        it.putExtra("caixa", m.getCaixa());
-                        it.putExtra("info", m.getInfo());
-                        it.putExtra("index", f);
-                        it.putExtra("status", "LOC");
-                        startActivityForResult(it, Constantes.EDITAR_ELEMENTO);
-                        return;
-
-                    }
-                }
-
+                ItensRetorno.IndexStatusId retorno = identificaMarcadorSelecionado();
+                String status = retorno.status;
+                int index = retorno.index;
+                if(!status.equals("")){
+                    Intent it = new Intent(StarwebFTTH.this, EditarElementoActivity.class);
+                    Marcador m = null;
+                    if(status.equals("WEB")){ m = tabelaDeMarcadores.get(index); }
+                    else if(status.equals("LOC")){ m = tabelaDeMarcadoresOffline.get(index); }
+                    it.putExtra("id", m.getId());
+                    it.putExtra("tipo", m.getTipo());
+                    it.putExtra("setor", m.getSetor());
+                    it.putExtra("alimentacao", m.getAlimentacao());
+                    it.putExtra("grupo", m.getGrupo());
+                    it.putExtra("caixa", m.getCaixa());
+                    it.putExtra("info", m.getInfo());
+                    it.putExtra("index", index);
+                    it.putExtra("status", status);
+                    startActivityForResult(it, Constantes.EDITAR_ELEMENTO);
+                }else{return;}
             }
         });
         excluirElemento.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int id = 0;
-                int index = 0;
-                String statusDoMarcador = "";
-                if(estaConectdoAInternet()){
-                    if(tabelaDeMarcadores != null){
-                        for (int f = 0; f < tabelaDeMarcadores.size(); f++) {
-                            if (marcadores.get(f).equals(marcadorSelecionado)) {
-                                Marcador m = tabelaDeMarcadores.get(f);
-                                id = m.getId();
-                                index = f;
-                                statusDoMarcador = "WEB";
-                                break;
-                            }
-                        }
-                    }
-                }
-                if(statusDoMarcador.equals("")){
-                    if(tabelaDeMarcadoresOffline != null){
-                        for (int f = 0; f < tabelaDeMarcadoresOffline.size(); f++) {
-                            if (marcadoresOffline.get(f).equals(marcadorSelecionado)) {
-                                Marcador m = tabelaDeMarcadoresOffline.get(f);
-                                id = m.getId();
-                                index = f;
-                                statusDoMarcador = "LOC";
-                                break;
-                            }
-                        }
-                        if(statusDoMarcador.equals("")){return;}
-                    }
-                }
-                final int _id = id;
-                final int _index = index;
-                final String status = statusDoMarcador;
+                ItensRetorno.IndexStatusId itemStatus = identificaMarcadorSelecionado();
+                final long _id = itemStatus.id;
+                final int _index = itemStatus.index;
+                final String status = itemStatus.status;
                 DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
@@ -381,7 +402,7 @@ public class StarwebFTTH extends AppCompatActivity implements
                                     new Thread(new Runnable() {
                                         public void run() {
                                             try {
-                                                String address = "http://www.gerenciaftth.tk/php/deleteMarker.php";
+                                                String address = CriaBanco.HTTP_DELETE_MARKER;
                                                 HttpClient client = new DefaultHttpClient();
                                                 HttpPost post = new HttpPost(address);
                                                 List<BasicNameValuePair> pairs = new ArrayList<BasicNameValuePair>();
@@ -460,6 +481,7 @@ public class StarwebFTTH extends AppCompatActivity implements
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
+
     //////////////////////////////// FIM DO ONCREATE //////////////////////////////////////////////
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -619,6 +641,7 @@ public class StarwebFTTH extends AppCompatActivity implements
                         opcoes.icon(BitmapDescriptorFactory.fromResource(R.drawable.poste));
                         opcoes.title("Poste");
                     }
+                    opcoes.draggable(true);
                     Marker marcador = mapa.addMarker(opcoes);
                     marcadoresOffline.add(marcador);
                     tabelaDeMarcadoresOffline.add(m);
@@ -643,7 +666,7 @@ public class StarwebFTTH extends AppCompatActivity implements
         new Thread(new Runnable() {
             public void run() {
                 try {
-                    String address = "http://www.gerenciaftth.tk/php/getMarkers.php";
+                    String address = CriaBanco.HTTP_GET_MARKERS;
                     HttpClient client = new DefaultHttpClient();
                     HttpPost post = new HttpPost(address);
                     List<BasicNameValuePair> pairs = new ArrayList<BasicNameValuePair>();
@@ -770,7 +793,6 @@ public class StarwebFTTH extends AppCompatActivity implements
                 startActivityForResult(intencao, Constantes.ADICIONAR_ELEMENTO);
             }
         });
-
         Dialog alerta = builder.create();
         alerta.show();
     }
@@ -789,10 +811,26 @@ public class StarwebFTTH extends AppCompatActivity implements
         MenuInflater inflater = getMenuInflater();
         getMenuInflater().inflate(R.menu.starweb_ftth, menu);
         inflater.inflate(R.menu.barra_de_pesquisa, menu);
-        SearchView mSearchView = (SearchView) menu.findItem(R.id.search)
+        final AutoCompleteSearchView mSearchView = (AutoCompleteSearchView)menu.findItem(R.id.search)
                 .getActionView();
         mSearchView.setQueryHint("");
         mSearchView.setOnQueryTextListener(this);
+        List<String> arrayList = new ArrayList<String>();
+        arrayList.add("teste 1");
+        arrayList.add("teste 2");
+        arrayList.add("teste 3");
+        arrayList.add("teste 4");
+        arrayList.add("teste 5");
+        arrayList.add("teste 6");
+        final ArrayAdapter<String> array = new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line, arrayList);
+        mSearchView.setAdapter(array);
+        mSearchView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mSearchView.setText((String)parent.getItemAtPosition(position).toString());
+            }
+        });
         return true;
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -805,6 +843,10 @@ public class StarwebFTTH extends AppCompatActivity implements
         else if (id == R.id.downloads) {
             return true;
         }
+        else if (id == R.id.atualizar) {
+            verificaConexaoEEscolheOProvedorDeDados();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -815,11 +857,17 @@ public class StarwebFTTH extends AppCompatActivity implements
         if (id == R.id.mapa_normal) {
             mapa.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         }  else if (id == R.id.mapa_satelite) {
-            mapa.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+            mapa.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        }else if (id == R.id.configuracoes) {
+           chamaConfiguracoes();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    private void chamaConfiguracoes(){
+        startActivity(new Intent(StarwebFTTH.this,ConfiguracoesActivity.class));
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
@@ -829,6 +877,7 @@ public class StarwebFTTH extends AppCompatActivity implements
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
+
             mapa.setMyLocationEnabled(true);
             mapa.getUiSettings().setZoomControlsEnabled(true);
             mapa.getUiSettings().setCompassEnabled(true);
@@ -839,7 +888,6 @@ public class StarwebFTTH extends AppCompatActivity implements
             CameraPosition cameraPosition = new CameraPosition.Builder().target(saoLourenco).zoom(14).build();
             CameraUpdate update = CameraUpdateFactory.newCameraPosition(cameraPosition);
             mapa.animateCamera(update);
-
             myLocation = new MinhaLocalizacao();
             mapa.setLocationSource(myLocation);
             myLocation.setLocation(saoLourenco);
